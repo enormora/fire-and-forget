@@ -1,0 +1,68 @@
+---
+name: Continuous integration
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        types: [opened, reopened, synchronize]
+    merge_group:
+
+permissions: {}
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+    run:
+        shell: bash
+
+jobs:
+    tests:
+        runs-on: ubuntu-24.04
+        permissions:
+            contents: read
+        strategy:
+            matrix:
+                node-version: [24, 26]
+        name: Tests with Node.js v${{ matrix.node-version }}
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+            - name: Use Node.js
+              uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+              with:
+                  node-version: ${{ matrix.node-version }}
+            - name: Install dependencies
+              run: npm clean-install
+            - name: Run tests
+              run: npx just test
+
+    workflow-security:
+        runs-on: ubuntu-24.04
+        name: Workflow security analysis
+        permissions:
+            contents: read # required for actions/checkout to read the workflow source
+            security-events: write # required by zizmor-action to upload SARIF to code scanning
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+            - name: Run zizmor
+              id: zizmor
+              uses: zizmorcore/zizmor-action@70fb788f84895a7701f5643d103d587e460b5c99 # v0.6.3
+              with:
+                  version: 1.26.1
+                  persona: pedantic
+                  min-severity: informational
+                  min-confidence: low
+                  config: .github/zizmor.yml
+            - name: Fail if zizmor reported findings
+              env:
+                  SARIF_FILE: ${{ steps.zizmor.outputs.output-file }}
+              run: |
+                  count="$(jq '[.runs[].results[]] | length' "$SARIF_FILE")"
+                  echo "zizmor findings: $count"
+                  test "$count" -eq 0

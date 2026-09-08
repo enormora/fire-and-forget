@@ -66,6 +66,7 @@ export async function buildConfig() {
                 provenance: { type: 'auto' }
             },
             additionalPackageJsonAttributes: {
+                description: packageJson.description,
                 author: packageJson.author,
                 license: packageJson.license,
                 repository: packageJson.repository,

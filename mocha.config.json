@@ -2,7 +2,7 @@
     "diff": true,
     "forbid-pending": true,
     "extension": ["ts"],
-    "spec": ["./source/**/*.test.ts"],
+    "spec": ["./source/**/*.test.ts", "./packtory.config.test.js"],
     "exclude": [],
     "jobs": 1,
     "parallel": false,

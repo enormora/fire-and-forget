@@ -40,7 +40,7 @@ export default [
     },
     {
         ...mochaNodeAssertConfig,
-        files: [ '**/*.test.ts' ]
+        files: [ '**/*.test.{js,ts}' ]
     },
     {
         files: [ '**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx,vue}' ],

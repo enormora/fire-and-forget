@@ -1,6 +1,10 @@
 // @ts-check
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+
+const executeFile = promisify(execFile);
 
 const projectFolder = process.cwd();
 const sourcesFolder = path.join(projectFolder, 'target/build/source');
@@ -40,6 +44,30 @@ const checks = {
 };
 
 /**
+ * @param {string} packageTags
+ * @param {string} initialCommit
+ * @returns {string | undefined}
+ */
+export function resolveChangelogBaseRef(packageTags, initialCommit) {
+    return packageTags.trim() === '' ? initialCommit.trim() : undefined;
+}
+
+/**
+ * @param {string} packageName
+ * @returns {Promise<string | undefined>}
+ */
+async function readChangelogBaseRef(packageName) {
+    const { stdout: packageTags } = await executeFile('git', [ 'tag', '--list', `${packageName}@*` ]);
+    const { stdout: initialCommit } = await executeFile('git', [
+        'rev-list',
+        '--max-parents=0',
+        '--first-parent',
+        'HEAD'
+    ]);
+    return resolveChangelogBaseRef(packageTags, initialCommit);
+}
+
+/**
  * @returns {Promise<import('@packtory/cli').PacktoryConfig>}
  */
 export async function buildConfig() {
@@ -53,6 +81,7 @@ export async function buildConfig() {
             }
         },
         changelog: {
+            explicitBaseRef: await readChangelogBaseRef(packageJson.name),
             packageTagFormat: '{packageName}@{version}',
             outputs: [ { kind: 'repository-file', path: 'CHANGELOG.md' }, { kind: 'github-release' } ]
         },

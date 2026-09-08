@@ -51,5 +51,24 @@ export default [
     {
         ...nodeConfigFileConfig,
         files: [ 'eslint.config.js', 'mocha.config.json', 'packtory.config.js' ]
+    },
+    {
+        files: [ 'source/index.ts' ],
+        rules: {
+            'no-barrel-files/no-barrel-files': 'off'
+        }
+    },
+    {
+        files: [ 'source/fire-and-forget-invoker.ts' ],
+        rules: {
+            'no-void': 'off'
+        }
+    },
+    {
+        files: [ '**/*.test.ts' ],
+        rules: {
+            'max-lines-per-function': 'off',
+            'max-statements': 'off'
+        }
     }
 ];

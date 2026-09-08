@@ -1,0 +1,11 @@
+{
+    "extends": "../tsconfig.base.json",
+    "compilerOptions": {
+        "tsBuildInfoFile": "../target/buildcache/sources.tsbuildinfo",
+        "rootDir": "../",
+        "types": [],
+        "lib": ["ES2023"]
+    },
+    "include": ["./**/*.ts", "./**/*.d.cts"],
+    "exclude": ["./**/*.test.ts"]
+}

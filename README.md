@@ -101,19 +101,19 @@ The same API is available from `@enormora/fire-and-forget/fire-and-forget-invoke
 
 Use the Node version in `.node-version`, then `npm clean-install`. Dependencies are pinned and updated through the shared Enormora Renovate presets.
 
-| Command | Purpose |
-| --- | --- |
-| `just compile` | Strict TypeScript compilation and declarations |
-| `just lint` / `just lint-fix` | Shared Enormora ESLint rules, zero warnings |
-| `just test-unit` | Mocha TDD tests with `node:assert` |
-| `just test-unit-coverage` | Tests with 100% coverage thresholds |
-| `just packtory-dry-run` | Registry-aware package validation and publish preview |
-| `just packtory-preview` | Packtory tarball at `target/fire-and-forget.tgz` (preview version `0.0.1`) |
-| `just test` | Compilation, lint, coverage, and Packtory dry run |
-| `just release-plan` / `just release-diff` | Inspect the next Packtory release |
-| `just changelog` | Preview the generated changelog |
-| `just prepare-release` | Generate and commit the release changelog (release workflow) |
-| `just publish-release` | Publish, tag, push, and create the GitHub release (publish workflow) |
+| Command                                   | Purpose                                                                    |
+| ----------------------------------------- | -------------------------------------------------------------------------- |
+| `just compile`                            | Strict TypeScript compilation and declarations                             |
+| `just lint` / `just lint-fix`             | Shared Enormora ESLint rules, zero warnings                                |
+| `just test-unit`                          | Mocha TDD tests with `node:assert`                                         |
+| `just test-unit-coverage`                 | Tests with 100% coverage thresholds                                        |
+| `just packtory-dry-run`                   | Registry-aware package validation and publish preview                      |
+| `just packtory-preview`                   | Packtory tarball at `target/fire-and-forget.tgz` (preview version `0.0.1`) |
+| `just test`                               | Compilation, lint, coverage, and Packtory dry run                          |
+| `just release-plan` / `just release-diff` | Inspect the next Packtory release                                          |
+| `just changelog`                          | Preview the generated changelog                                            |
+| `just prepare-release`                    | Generate and commit the release changelog (release workflow)               |
+| `just publish-release`                    | Publish, tag, push, and create the GitHub release (publish workflow)       |
 
 ## Releases
 

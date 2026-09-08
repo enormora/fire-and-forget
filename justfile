@@ -21,4 +21,25 @@ test-unit:
 test-unit-coverage:
     c8 --config .c8rc.json just test-unit
 
-test: compile lint test-unit-coverage
+test: compile lint test-unit-coverage packtory-dry-run
+
+packtory-dry-run: compile
+    packtory publish
+
+packtory-preview: compile
+    packtory pack @enormora/fire-and-forget --format tar --out target/fire-and-forget.tgz --version 0.0.1
+
+release-plan: compile
+    packtory release
+
+release-diff: compile
+    packtory release-diff
+
+changelog: compile
+    packtory changelog
+
+prepare-release: compile
+    packtory release --write-changelog --commit --no-dry-run
+
+publish-release: compile
+    packtory release --publish --tag --push --github-release --no-dry-run

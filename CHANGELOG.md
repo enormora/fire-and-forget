@@ -1,3 +1,9 @@
+## @enormora/fire-and-forget 0.0.4 (September 23, 2026)
+
+### Documentation
+
+* Simplify README ([#12](https://github.com/enormora/fire-and-forget/pull/12))
+
 ## @enormora/fire-and-forget 0.0.3 (September 23, 2026)
 
 ### Documentation

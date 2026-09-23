@@ -17,7 +17,7 @@ jobs:
         permissions:
             actions: write # required to dispatch release PR CI and delete gated PR runs
             contents: write # required to create or update the release branch
-            issues: write # required to apply the build label to the release PR
+            issues: write # required to apply the release label to the release PR
             pull-requests: write # required to create, update, and close the release PR
             statuses: write # required to mirror dispatched release PR CI results
         steps:

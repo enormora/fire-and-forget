@@ -112,14 +112,14 @@ Use the Node version in `.node-version`, then `npm clean-install`. Dependencies 
 | `just test`                               | Compilation, lint, coverage, and Packtory dry run                          |
 | `just release-plan` / `just release-diff` | Inspect the next Packtory release                                          |
 | `just changelog`                          | Preview the generated changelog                                            |
-| `just prepare-release`                    | Generate and commit the release changelog (release workflow)               |
+| `just prepare-release`                    | Maintain the Packtory release pull request                                 |
 | `just publish-release`                    | Publish, tag, push, and create the GitHub release (publish workflow)       |
 
 ## Releases
 
 The npm package was bootstrapped with `@packtory/bootstrap-npm-package`. npm Trusted Publishing is configured once for the `Publish Release` workflow; the repository does not store an npm token.
 
-Run the **Release** workflow and Packtory will maintain the `release/fire-and-forget` pull request, generate its changelog, and apply the `build` label. CI validates the release PR before it can merge. Merging a valid release PR authorizes **Publish Release**, where Packtory publishes publicly through npm OIDC with provenance and creates the package tag and GitHub Release. Packtory determines release versions from registry state and package changes.
+Run the **Release** workflow and Packtory will maintain the `release/fire-and-forget` pull request, generate its changelog, and apply the `release` label. CI validates the release PR before it can merge. Merging a valid release PR authorizes **Publish Release**, where Packtory publishes publicly through npm OIDC with provenance and creates the package tag and GitHub Release. Packtory determines release versions from registry state and package changes.
 
 Changelog entries come from merged, labeled pull requests. Before the first package tag exists, the configuration uses the repository's initial commit as the changelog baseline; subsequent releases use Packtory's package-tag resolution. Direct commits do not create changelog entries.
 

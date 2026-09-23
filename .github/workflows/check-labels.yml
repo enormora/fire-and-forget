@@ -20,6 +20,7 @@ jobs:
             pull-requests: read # required to inspect labels on the pull request event payload
         if: >
             github.event_name == 'pull_request' &&
+            contains(github.event.pull_request.labels.*.name, 'release') == false &&
             contains(github.event.pull_request.labels.*.name, 'breaking') == false &&
             contains(github.event.pull_request.labels.*.name, 'bug') == false &&
             contains(github.event.pull_request.labels.*.name, 'feature') == false &&

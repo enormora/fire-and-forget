@@ -60,7 +60,7 @@ function createReleasePullRequestSettings(packageName) {
                 'Workflow security analysis'
             ]
         },
-        label: 'build',
+        label: 'release',
         title: 'Prepare release'
     };
 }
@@ -105,6 +105,9 @@ export async function buildConfig() {
         changelog: {
             explicitBaseRef: await readChangelogBaseRef(packageJson.name),
             packageTagFormat: '{packageName}@{version}',
+            prLog: {
+                ignoredLabels: [ 'release' ]
+            },
             outputs: [ { kind: 'repository-file', path: 'CHANGELOG.md' }, { kind: 'github-release' } ]
         },
         releasePullRequest: createReleasePullRequestSettings(packageJson.name),

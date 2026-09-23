@@ -11,8 +11,8 @@ const sourcesFolder = path.join(projectFolder, 'target/build/source');
 const licensePath = path.join(projectFolder, 'LICENSE');
 const readmePath = path.join(projectFolder, 'README.md');
 const additionalFiles = [
-    { sourceFilePath: licensePath, targetFilePath: 'LICENSE' },
-    { sourceFilePath: readmePath, targetFilePath: 'README.md' }
+    { inputFilePath: licensePath, targetFilePath: 'LICENSE' },
+    { inputFilePath: readmePath, targetFilePath: 'README.md' }
 ];
 
 const packageRoots = {
@@ -42,6 +42,28 @@ const checks = {
     noDevDependencyImports: { enabled: true },
     uniqueTargetPaths: { enabled: true }
 };
+
+/**
+ * @param {string} packageName
+ */
+function createReleasePullRequestSettings(packageName) {
+    return {
+        branch: 'release/fire-and-forget',
+        body: `Updates CHANGELOG.md for the next ${packageName} release.`,
+        githubActionsCi: {
+            trigger: 'workflow-dispatch',
+            workflowFile: 'continuous-integration.yml',
+            requiredStatusContexts: [
+                'Tests with Node.js v24',
+                'Tests with Node.js v26',
+                'Release PR policy',
+                'Workflow security analysis'
+            ]
+        },
+        label: 'build',
+        title: 'Prepare release'
+    };
+}
 
 /**
  * @param {string} packageTags
@@ -85,6 +107,7 @@ export async function buildConfig() {
             packageTagFormat: '{packageName}@{version}',
             outputs: [ { kind: 'repository-file', path: 'CHANGELOG.md' }, { kind: 'github-release' } ]
         },
+        releasePullRequest: createReleasePullRequestSettings(packageJson.name),
         checks,
         commonPackageSettings: {
             sourcesFolder,

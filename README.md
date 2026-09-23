@@ -117,12 +117,12 @@ Use the Node version in `.node-version`, then `npm clean-install`. Dependencies 
 
 ## Releases
 
-Packtory owns packaging, release planning, changelog generation, and publishing. Run the **Release** workflow to prepare a `release/fire-and-forget` pull request. Review and merge it after checks pass. **Publish Release** verifies the selected release commit and publishes publicly using npm Trusted Publishing and provenance. Tags use `@enormora/fire-and-forget@{version}`. Packtory determines published versions from registry state and artifact changes.
+The npm package was bootstrapped with `@packtory/bootstrap-npm-package`. npm Trusted Publishing is configured once for the `Publish Release` workflow; the repository does not store an npm token.
+
+Run the **Release** workflow and Packtory will maintain the `release/fire-and-forget` pull request, generate its changelog, and apply the `build` label. CI validates the release PR before it can merge. Merging a valid release PR authorizes **Publish Release**, where Packtory publishes publicly through npm OIDC with provenance and creates the package tag and GitHub Release. Packtory determines release versions from registry state and package changes.
 
 Changelog entries come from merged, labeled pull requests. Before the first package tag exists, the configuration uses the repository's initial commit as the changelog baseline; subsequent releases use Packtory's package-tag resolution. Direct commits do not create changelog entries.
 
 `packtory-preview` produces an inspectable tarball of the library files. Packtory's neutral `0.0.0` default keeps this synthetic preview version independent of the npm release version. The publish pipeline also generates `sbom.cdx.json`; `just release-diff` shows the full publish file list, including that SBOM.
 
-Configure the npm trusted publisher with owner **enormora**, repository **fire-and-forget**, workflow **publish-release.yml**, publish permission enabled, and no environment restriction. No npm token is required by these workflows. Repository Actions must be allowed to create pull requests.
-
-For the first release, npm package ownership and Trusted Publishing must be established before publishing. npm currently requires an existing package to configure trust; an unpublished package therefore needs an owner-managed bootstrap before this OIDC-only workflow can publish. Do not bypass the release workflow with a local `npm publish`. See [npm's Trusted Publishing prerequisites](https://docs.npmjs.com/cli/v11/commands/npm-trust/#prerequisites).
+The trusted publisher uses owner **enormora**, repository **fire-and-forget**, and workflow **publish-release.yml**, with publishing enabled and no environment restriction. Repository Actions must be allowed to create pull requests.

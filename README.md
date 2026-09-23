@@ -108,7 +108,7 @@ Use the Node version in `.node-version`, then `npm clean-install`. Dependencies 
 | `just test-unit`                          | Mocha TDD tests with `node:assert`                                         |
 | `just test-unit-coverage`                 | Tests with 100% coverage thresholds                                        |
 | `just packtory-dry-run`                   | Registry-aware package validation and publish preview                      |
-| `just packtory-preview`                   | Packtory tarball at `target/fire-and-forget.tgz` (preview version `0.0.1`) |
+| `just packtory-preview`                   | Packtory tarball at `target/fire-and-forget.tgz` (preview version `0.0.0`) |
 | `just test`                               | Compilation, lint, coverage, and Packtory dry run                          |
 | `just release-plan` / `just release-diff` | Inspect the next Packtory release                                          |
 | `just changelog`                          | Preview the generated changelog                                            |
@@ -121,7 +121,7 @@ Packtory owns packaging, release planning, changelog generation, and publishing.
 
 Changelog entries come from merged, labeled pull requests. Before the first package tag exists, the configuration uses the repository's initial commit as the changelog baseline; subsequent releases use Packtory's package-tag resolution. Direct commits do not create changelog entries.
 
-`packtory-preview` produces an inspectable tarball of the library files. The publish pipeline also generates `sbom.cdx.json`; `just release-diff` shows the full publish file list, including that SBOM.
+`packtory-preview` produces an inspectable tarball of the library files. Packtory's neutral `0.0.0` default keeps this synthetic preview version independent of the npm release version. The publish pipeline also generates `sbom.cdx.json`; `just release-diff` shows the full publish file list, including that SBOM.
 
 Configure the npm trusted publisher with owner **enormora**, repository **fire-and-forget**, workflow **publish-release.yml**, publish permission enabled, and no environment restriction. No npm token is required by these workflows. Repository Actions must be allowed to create pull requests.
 

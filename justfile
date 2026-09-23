@@ -27,7 +27,7 @@ packtory-dry-run: compile
     packtory publish
 
 packtory-preview: compile
-    packtory pack @enormora/fire-and-forget --format tar --out target/fire-and-forget.tgz --version 0.0.1
+    packtory pack @enormora/fire-and-forget --format tar --out target/fire-and-forget.tgz
 
 release-plan: compile
     packtory release

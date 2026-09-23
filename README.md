@@ -58,21 +58,3 @@ export function createFireAndForgetInvoker(
 ```
 
 The same API is exported from `@enormora/fire-and-forget/fire-and-forget-invoker`.
-
-## Development
-
-Use the Node.js version in `.node-version`, then run `npm clean-install`.
-
-| Command             | Description                   |
-| ------------------- | ----------------------------- |
-| `just compile`      | Compile TypeScript            |
-| `just lint`         | Run ESLint                    |
-| `just test-unit`    | Run unit tests                |
-| `just test`         | Run the full validation suite |
-| `just release-plan` | Preview the next release      |
-
-## Releases
-
-Run the `Release` GitHub Actions workflow. Packtory creates or updates the `release/fire-and-forget` pull request with the generated changelog.
-
-Merging that release PR triggers npm publication through Trusted Publishing (OIDC), followed by the package tag and GitHub Release. Normal merges to `main` do not publish a package.

@@ -17,11 +17,11 @@ const additionalFiles = [
 
 const packageRoots = {
     main: {
-        js: 'index.js',
+        javaScript: 'index.js',
         declarationFile: 'index.d.ts'
     },
     fireAndForgetInvoker: {
-        js: 'fire-and-forget-invoker.js',
+        javaScript: 'fire-and-forget-invoker.js',
         declarationFile: 'fire-and-forget-invoker.d.ts'
     }
 };
@@ -34,13 +34,16 @@ const packageInterface = {
 };
 
 const checks = {
-    typeScriptIntegrity: { enabled: true },
+    typeScriptIntegrity: { enabled: true, declarations: 'all' },
     noDuplicatedFiles: { enabled: true },
     requiredFiles: { enabled: true, files: [ 'LICENSE', 'README.md' ] },
-    maxBundleSize: { enabled: true, bytes: 100_000 },
+    maximumBundleSize: { enabled: true, bytes: 100_000 },
     noUnusedBundleDependencies: { enabled: true },
-    noDevDependencyImports: { enabled: true },
-    uniqueTargetPaths: { enabled: true }
+    noDevelopmentDependencyImports: { enabled: true },
+    uniqueTargetPaths: { enabled: true },
+    noUnexposedExecutables: { enabled: true },
+    nodeEngineCompatibility: { enabled: true },
+    noSideEffects: { enabled: true }
 };
 
 /**
@@ -50,7 +53,7 @@ function createReleasePullRequestSettings(packageName) {
     return {
         branch: 'release/fire-and-forget',
         body: `Updates CHANGELOG.md for the next ${packageName} release.`,
-        githubActionsCi: {
+        githubActionsContinuousIntegration: {
             trigger: 'workflow-dispatch',
             workflowFile: 'continuous-integration.yml',
             requiredStatusContexts: [
@@ -75,6 +78,40 @@ export function resolveChangelogBaseRef(packageTags, initialCommit) {
 }
 
 /**
+ * @param {string | undefined} explicitBaseReference
+ * @returns {NonNullable<import('@packtory/cli').PacktoryConfiguration['changelog']>}
+ */
+function createChangelogSettings(explicitBaseReference) {
+    return {
+        explicitBaseReference,
+        packageTagFormat: '{packageName}@{version}',
+        pullRequestLog: {
+            ignoredLabels: [ 'release' ],
+            collapseRules: [
+                {
+                    label: 'upgrade',
+                    pattern: '^(?<prefix>⬆️ )?Update dependency (?<dependency>.+?) from (?<from>.+?) to (?<to>.+?)$',
+                    replace: '$<prefix>Update dependency $<dependency> from $<from> to $<to>'
+                },
+                {
+                    label: 'upgrade',
+                    pattern: '^(?<prefix>⬆️ )?Update (?:dependency )?`?(?<dependency>.+?)`? to `?(?<to>[^` ]+)`?$',
+                    replace: '$<prefix>Update dependency $<dependency> to $<to>',
+                    versionGroup: 'to'
+                },
+                {
+                    label: 'upgrade',
+                    pattern: '^(?<prefix>⬆️ )?(?<dependency>Lock file maintenance|Update (?:.+ dependencies|eslint))$',
+                    replace: '$<prefix>$<dependency>',
+                    collapse: 'same'
+                }
+            ]
+        },
+        outputs: [ { kind: 'repository-file', path: 'CHANGELOG.md' }, { kind: 'github-release' } ]
+    };
+}
+
+/**
  * @param {string} packageName
  * @returns {Promise<string | undefined>}
  */
@@ -90,37 +127,30 @@ async function readChangelogBaseRef(packageName) {
 }
 
 /**
- * @returns {Promise<import('@packtory/cli').PacktoryConfig>}
+ * @returns {Promise<import('@packtory/cli').PacktoryConfiguration>}
  */
-export async function buildConfig() {
+export async function buildConfiguration() {
     const packageJsonContent = await fs.readFile(path.join(projectFolder, 'package.json'), { encoding: 'utf8' });
     const packageJson = JSON.parse(packageJsonContent);
     return {
         registrySettings: {
-            auth: {
-                publish: { type: 'npm-oidc', provider: 'github-actions' },
-                metadata: 'auto'
+            authentication: {
+                publish: { type: 'npm-open-identity-connect', provider: 'github-actions' },
+                metadata: 'automatic'
             }
         },
-        changelog: {
-            explicitBaseRef: await readChangelogBaseRef(packageJson.name),
-            packageTagFormat: '{packageName}@{version}',
-            prLog: {
-                ignoredLabels: [ 'release' ]
-            },
-            outputs: [ { kind: 'repository-file', path: 'CHANGELOG.md' }, { kind: 'github-release' } ]
-        },
+        changelog: createChangelogSettings(await readChangelogBaseRef(packageJson.name)),
         releasePullRequest: createReleasePullRequestSettings(packageJson.name),
         checks,
         commonPackageSettings: {
             sourcesFolder,
-            mainPackageJson: packageJson,
+            mainPackageManifest: packageJson,
             includeSourceMapFiles: true,
             publishSettings: {
                 access: 'public',
-                provenance: { type: 'auto' }
+                provenance: { type: 'automatic' }
             },
-            additionalPackageJsonAttributes: {
+            additionalPackageManifestAttributes: {
                 description: packageJson.description,
                 author: packageJson.author,
                 license: packageJson.license,
